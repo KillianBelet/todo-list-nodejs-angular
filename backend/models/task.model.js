@@ -15,6 +15,11 @@ const TaskSchema = new mongoose.Schema({
         required: true,
         default: false
     },
+    datelimit: {
+        type: Date,
+        required: false,
+        default: null
+    },
     tague: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Tague',

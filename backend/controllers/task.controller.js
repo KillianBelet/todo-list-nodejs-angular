@@ -34,17 +34,22 @@ module.exports.editTask = async (req, res) => {
 
 
 module.exports.setTask = async (req, res) => {
+
     if(!req.body.name){
         return res.status(400).json({message : "Merci d'ajouter un name à votre task."})
     }
     else if(!req.body.description){
         return res.status(400).json({message : "Merci d'ajouter une description à votre task."})
     }
+    else if(!req.body.datelimit){
+        return res.status(400).json({message : "Merci d'ajouter une date limite à votre task."})
+    }
     else{
         const task = await TaskModel.create({
             name : req.body.name,
             description : req.body.description,
-            completed : req.body.completed
+            completed : req.body.completed,
+            datelimit: req.body.datelimit,
         })
         return res.status(200).json(task); 
     }

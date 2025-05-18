@@ -1,7 +1,7 @@
 <div class="container py-4">
-    <h2  class="mb-4 titre" >📝 Ma Todo List</h2>
+    <h2  class="mb-4 titre" > Ma Todo List</h2>
     <div class="alert alert-info" role="alert">
-      Tu as terminé une tâche !
+      Tâche terminée !
     </div>
   
     <form class="row g-2 mb-4" (ngSubmit)="addTodoForm(newTask)">
@@ -25,6 +25,16 @@
           required
         />
       </div>
+      <div class="col-md-5">
+        <input
+          type="datetime-local"
+          class="form-control"
+          placeholder="date limite"
+          [(ngModel)]="newTask.datelimit"
+          name="dateLimit"
+          required
+        />
+      </div>
       <div class="col-md-2">
         <button class="btn btn-primary w-100" type="submit">
           Ajouter
@@ -42,6 +52,13 @@
             {{ task.name }}
           </h5>
           <p class="text-muted mb-1">{{ task.description }}</p>
+          <p class="text-muted mb-1" *ngIf="task.datelimit">
+            <span [ngClass]="isOverdue(task) ? 'text-danger fw-bold' : 'text-secondary'">
+               Date limite :
+              {{ task.datelimit | date:'dd/MM/yyyy à HH:mm' }}
+              <span *ngIf="isOverdue(task)"> (dépassée)</span>
+            </span>
+          </p>
           <span
             class="badge rounded-pill"
             [ngClass]="task.completed ? 'bg-success' : 'bg-warning'"

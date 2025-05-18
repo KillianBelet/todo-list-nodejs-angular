@@ -1,4 +1,4 @@
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { TodoListService } from './todo-list.service';
 import { Task } from '../../shared/model/task.model';
@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [NgFor, NgIf, FormsModule, NgClass],
+  imports: [NgFor, NgIf, FormsModule, NgClass, CommonModule],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.css'
 })
@@ -16,7 +16,8 @@ export class TodoComponent implements OnInit {
   newTask: Task = {
     name: '',
     description: '',
-    completed: false
+    completed: false,
+    datelimit: ''
   };
 
   constructor(private TodoListService: TodoListService) {
@@ -34,6 +35,7 @@ export class TodoComponent implements OnInit {
   }
 
   addTodoForm(taskToAdd: Task) {
+
     this.TodoListService.setTask(taskToAdd).subscribe({
       next: createdTask => {
         console.log('Tâche créée avec succès :', createdTask);
@@ -43,6 +45,10 @@ export class TodoComponent implements OnInit {
         console.error('Erreur lors de la création :', err);
       }
     });
+  }
+
+  isOverdue(task: Task): boolean {
+    return !!task.datelimit && new Date(task.datelimit) < new Date();
   }
 
   remove(taskToRemove: Task) {

@@ -31,6 +31,7 @@ export class TodoListService {
   }
 
   setTask(taskCreated: Task): Observable<Task>{
+    
     console.log(taskCreated)
     return this._httpClient.post<Task>(this.url + "create", taskCreated, {withCredentials: true })
   }

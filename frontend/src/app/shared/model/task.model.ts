@@ -3,5 +3,5 @@ export interface Task  {
     name: String;
     description: String;
     completed: boolean;
-    
+    datelimit: string;
 }
