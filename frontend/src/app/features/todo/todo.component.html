@@ -1,0 +1,74 @@
+<div class="container py-4">
+    <h2  class="mb-4 titre" >📝 Ma Todo List</h2>
+    <div class="alert alert-info" role="alert">
+      Tu as terminé une tâche !
+    </div>
+  
+    <form class="row g-2 mb-4" (ngSubmit)="addTodoForm(newTask)">
+      <div class="col-md-5">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Nom de la tâche"
+          [(ngModel)]="newTask.name"
+          name="name"
+          required
+        />
+      </div>
+      <div class="col-md-5">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Description"
+          [(ngModel)]="newTask.description"
+          name="description"
+          required
+        />
+      </div>
+      <div class="col-md-2">
+        <button class="btn btn-primary w-100" type="submit">
+          Ajouter
+        </button>
+      </div>
+    </form>
+  
+    <ul class="list-group">
+      <li
+        *ngFor="let task of tasks"
+        class="list-group-item d-flex justify-content-between align-items-center"
+      >
+        <div>
+          <h5 [ngClass]="{'text-decoration-line-through': task.completed}">
+            {{ task.name }}
+          </h5>
+          <p class="text-muted mb-1">{{ task.description }}</p>
+          <span
+            class="badge rounded-pill"
+            [ngClass]="task.completed ? 'bg-success' : 'bg-warning'"
+          >
+            {{ task.completed ? 'Terminée' : 'En cours' }}
+          </span>
+        </div>
+        <div>
+          <button
+            *ngIf="!task.completed"
+            class="btn btn-success btn-sm me-1"
+            (click)="complete(task)"
+          >
+            Compléter
+          </button>
+          <button
+            class="btn btn-danger btn-sm"
+            (click)="remove(task)"
+          >
+            Supprimer
+          </button>
+        </div>
+      </li>
+    </ul>
+  
+    <p *ngIf="tasks.length === 0" class="text-center text-muted mt-3">
+      Aucune tâche pour le moment.
+    </p>
+  </div>
+  
