@@ -67,6 +67,48 @@
           </span>
         </div>
         <div>
+
+          <ng-template #content let-modal>
+            <div class="modal-header">
+              <h4 class="modal-title">Reporter la tâche</h4>
+              <button type="button" class="btn-close" aria-label="Close"
+                      (click)="modal.dismiss()"></button>
+            </div>
+          
+            <div class="modal-body">
+              <form #f="ngForm">
+                <div class="mb-3">
+                  <label for="newDateTime">Nouvelle deadline:</label>
+                  <input
+                    id="newDateTime"
+                    type="datetime-local"
+                    class="form-control"
+                    name="newDateTime"
+                    [(ngModel)]="newDateTime"
+                    required
+                    step="1" />
+                </div>
+              </form>
+            </div>
+          
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-secondary"
+                      (click)="modal.close()">Annuler</button>
+              <button type="button" class="btn btn-primary"
+                      [disabled]="f.invalid"
+                      (click)="onSaveReporting(modal, currentTask)">
+                Sauvegarder
+              </button>
+            </div>
+          </ng-template>
+          
+          <button *ngIf="isOverdue(task)"   class="btn btn-warning btn-sm me-1"
+                  (click)="openReporting(content, task)">
+            Reporter
+          </button>
+
+
+
           <button
             *ngIf="!task.completed"
             class="btn btn-success btn-sm me-1"

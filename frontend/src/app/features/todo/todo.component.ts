@@ -1,13 +1,14 @@
 import { CommonModule, NgClass, NgFor, NgIf } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef } from '@angular/core';
 import { TodoListService } from './todo-list.service';
 import { Task } from '../../shared/model/task.model';
 import { FormsModule } from '@angular/forms';
+import { ModalDismissReasons, NgbDateStruct, NgbModal, NgbModalRef, NgbModule, NgbTimeStruct } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-list',
   standalone: true,
-  imports: [NgFor, NgIf, FormsModule, NgClass, CommonModule],
+  imports: [NgFor, NgIf, FormsModule, NgClass, CommonModule,  NgbModule, ],
   templateUrl: './todo.component.html',
   styleUrl: './todo.component.css'
 })
@@ -20,7 +21,13 @@ export class TodoComponent implements OnInit {
     datelimit: ''
   };
 
-  constructor(private TodoListService: TodoListService) {
+
+  currentTask!: Task;
+  private modalRef?: NgbModalRef;
+  public closeResult = '';
+  newDateTime!: string;
+
+  constructor(private TodoListService: TodoListService, private modalService: NgbModal) {
     this.tasks = this.TodoListService.tasks;
   }
 
@@ -67,7 +74,7 @@ export class TodoComponent implements OnInit {
   }
 
 
-  complete(taskHasCompleted: Task) {
+  reported(taskHasCompleted: Task) {
     this.TodoListService.completed(taskHasCompleted).subscribe({
           next: (response) => {
             console.log("Tache mise à jour avec succès ", response)
@@ -80,6 +87,69 @@ export class TodoComponent implements OnInit {
         });
   }
 
+  complete(taskHasCompleted: Task) {
+    this.TodoListService.completed(taskHasCompleted).subscribe({
+          next: (response) => {
+            console.log("Tache mise à jour avec succès ", response)
+            taskHasCompleted.completed = true
+            this.tasks.push()
+          },
+          error : (err) => {
+            console.error(err)
+          }
+        });
+  }
+  closeReporting(){
+
+  }
+
+  openReporting(content: TemplateRef<any>, task: Task): void {
+    this.currentTask = task;
+
+
+    if (task.datelimit) {
+      this.newDateTime = new Date(task.datelimit)
+        .toISOString()
+        .substring(0, 19);
+    }
+  
+    this.modalRef = this.modalService.open(content, {
+      size: 'sm',
+      backdrop: 'static',
+    });
+  
+    this.modalRef.result
+      .then((result: string) => { this.closeResult = `Fermé avec : ${result}`; })
+      .catch((reason: any) => { this.closeResult = `Dismissed ${this.getDismissReason(reason)}`; });
+  }
+
+
+  onSaveReporting(modal: NgbModalRef | any, task: Task): void {
+    if (!this.newDateTime) return;
+
+    task.datelimit = this.newDateTime; 
+    modal.close('report saved');
+    
+    this.TodoListService.reportingTask(task).subscribe({
+      next: (response) => {
+        console.log("La deadline à bien était reporté ", response)
+
+      },
+      error : (err) => {
+        console.error(err)
+      }
+    });
+  }
+
+  private getDismissReason(reason: any): string {
+    if (reason === ModalDismissReasons.ESC) {
+      return 'par la touche Echap';
+    } else if (reason === ModalDismissReasons.BACKDROP_CLICK) {
+      return 'en cliquant en dehors';
+    } else {
+      return `avec : ${reason}`;
+    }
+  }
 
   onButtonClick(task: Task) {
     this.TodoListService.completed(task);

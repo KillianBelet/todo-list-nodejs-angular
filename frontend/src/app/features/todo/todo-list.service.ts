@@ -14,7 +14,7 @@ export class TodoListService {
   constructor(private _httpClient: HttpClient) { }
 
   getTasks(): Observable<Task[]>{
-    return this._httpClient.get<Task[]>(this.url + "getAll",{withCredentials: true })
+    return this._httpClient.get<Task[]>(this.url + "getAll", {withCredentials: true })
   }
 
   completed(taskSelected: Task): Observable<Task> {
@@ -27,7 +27,13 @@ export class TodoListService {
 
   removeTask(taskSelected: Task): Observable<Task>{
     console.log(taskSelected)
-    return this._httpClient.delete<Task>(this.url + "delete/" + taskSelected._id,{withCredentials: true })
+    return this._httpClient.delete<Task>(this.url + "delete/" + taskSelected._id, {withCredentials: true })
+  }
+
+  reportingTask(taskEdited: Task): Observable<Task>{
+    const body = { datelimit: taskEdited.datelimit };
+    console.log(taskEdited)
+    return this._httpClient.patch<Task>(this.url + "modify/" + taskEdited._id, body, {withCredentials: true } )
   }
 
   setTask(taskCreated: Task): Observable<Task>{
